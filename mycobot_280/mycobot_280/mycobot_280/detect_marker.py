@@ -13,7 +13,7 @@ class ImageConverter(Node):
         super().__init__("detect_marker")
         self.br = TransformBroadcaster(self)
         self.bridge = CvBridge()
-        self.aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
+        self.aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_100)
         self.aruo_params = cv2.aruco.DetectorParameters_create()
         calibrationParams = cv2.FileStorage(
             "calibrationFileName.xml", cv2.FILE_STORAGE_READ
@@ -67,7 +67,7 @@ class ImageConverter(Node):
                 #   marker corners
                 #   marker size (meter)
                 ret = cv2.aruco.estimatePoseSingleMarkers(
-                    corners, 0.05, self.camera_matrix, self.dist_coeffs
+                    corners, 0.024, self.camera_matrix, self.dist_coeffs
                 )
                 (rvec, tvec) = (ret[0], ret[1])
                 (rvec - tvec).any()
@@ -87,7 +87,7 @@ class ImageConverter(Node):
                     )
 
                 xyz = tvec[0, 0, :]
-                xyz = [xyz[0] - 0.045, xyz[1], xyz[2] - 0.03]
+                xyz = [-1.0 * (xyz[0] - 0.045), xyz[1], -1.0 * (xyz[2] - 0.03)]
 
                 # get quaternion for ros.
                 euler = rvec[0, 0, :]

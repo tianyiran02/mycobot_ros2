@@ -46,7 +46,7 @@ temp_x = temp_y = temp_z = 0.0
 temp_time = time.time()
 
 
-def pub_coords(x, y, z, rx=-150, ry=10, rz=-90, sp=70, m=2):
+def pub_coords(x, y, z, rx=0, ry=0, rz=-35, sp=70, m=2):
     """发布坐标"""
     coords.x = x
     coords.y = y
@@ -94,18 +94,17 @@ def target_is_moving(x, y, z):
 
 
 def grippercallback(data):
-    """回调函数"""
     global flag, temp_x, temp_y, temp_z
-    # rclpy.loginfo('gripper_subscriber get date :%s', data)
-    if flag:
-        return
 
-    # 解析出坐标值
+    # Parse out the coordinate value,解析出坐标值
     # pump length: 88mm
+    print("CP1!")
     x = float(format(data.pose.position.x * 1000, ".2f"))
     y = float(format(data.pose.position.y * 1000, ".2f"))
     z = float(format(data.pose.position.z * 1000, ".2f"))
+    print("CP2!")
 
+    # When the running time is less than 30s, or the target position is still changing, perform tracking behavior
     # 当运行时间小于 30s，或目标位置还在改变时，进行追踪行为
     if (
         time.time() - temp_time < 30
@@ -113,15 +112,17 @@ def grippercallback(data):
         or target_is_moving(x - x_offset, y - y_offset, z)
     ):
 
+        print("CP3!")
         x -= x_offset
         y -= y_offset
         pub_coords(x - 20, y, 280)
         time.sleep(0.1)
+        print("CP4!")
 
         temp_x, temp_y, temp_z = x, y, z
         return
-    else:  # 表示目标处于静止状态，可以尝试抓取
-
+    else:  #Indicates that the target is stationary and can try to grab, 表示目标处于静止状态，可以尝试抓取
+        print("CP5!")
         print(x, y, z)
 
         # detect heigth + pump height + limit height + offset
@@ -129,40 +130,45 @@ def grippercallback(data):
         y += y_offset
         z = z + 88 + z_offset
 
+        print(x,y,z)
         pub_coords(x, y, z)
         time.sleep(2.5)
-
+        print("CP6!")
         # down
         for i in range(1, 17):
             pub_coords(x, y, z - i * 5, rx=-160, sp=10)
             time.sleep(0.1)
-
+        print("CP7!")
         time.sleep(2)
 
-        pub_pump(True, Pin)
+        # pub_pump(True, Pin)
         # pump on
-
+        print("CP8!")
         pub_coords(x, y, z + 20, -165)
         time.sleep(1.5)
 
-        pub_angles(0, 30, -50, -40, 0, 0, 50)
-        time.sleep(1.5)
+        # print("CP9!")
+        # pub_angles(0, 30, -50, -40, 0, 0, 50)
+        # time.sleep(1.5)
 
-        put_z = 140
-        pub_coords(39.4, -174.7, put_z, -177.13, -4.13, -152.59, 70, 2)
-        time.sleep(1.5)
+        # print("CP10!")
+        # put_z = 140
+        # pub_coords(39.4, -174.7, put_z, -177.13, -4.13, -152.59, 70, 2)
+        # time.sleep(1.5)
 
-        for i in range(1, 8):
-            pub_coords(39.4, -174.7, put_z - i * 5, -
-                       177.13, -4.13, -152.59, 15, 2)
-            time.sleep(0.1)
+        # print("CP11!")
+        # for i in range(1, 8):
+        #     pub_coords(39.4, -174.7, put_z - i * 5, -
+        #                177.13, -4.13, -152.59, 15, 2)
+        #     time.sleep(0.1)
 
-        pub_pump(False, Pin)
+        # pub_pump(False, Pin)
 
-        time.sleep(0.5)
+        # print("CP12!")
+        # time.sleep(0.5)
 
-        pub_angles(0, 30, -50, -40, 0, 0, 50)
-        time.sleep(1.5)
+        # pub_angles(0, 33, 30, 27, 0, 0, 10)
+        # time.sleep(1.5)
 
         # finally
         flag = True
@@ -171,7 +177,7 @@ def grippercallback(data):
 def main():
     for _ in range(10):
         # pub_coords(150, 20, 220, -175, 0, -90, 70, 2)
-        pub_angles(0, 30, -50, -40, 0, 0, 50)
+        pub_angles(0, 33, 30, 27, 0, 0, 10)
         #     pub_angles(random.randint(-30, 30), random.randint(-30, 30), random.randint(-30, 30), random.randint(-30, 30), random.randint(-30, 30), random.randint(-30, 30), 70)
         time.sleep(0.5)
 

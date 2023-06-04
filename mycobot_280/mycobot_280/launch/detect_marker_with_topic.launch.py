@@ -91,23 +91,20 @@ def generate_launch_description():
     )
     res.append(real_listener_node)
 
-    # opencv_camera_node = Node(
-    #     name="opencv_camera",
-    #     package="mycobot_280",
-    #     executable="opencv_camera",
-    #     output="screen",
-    #     arguments=[LaunchConfiguration("num")]
-    # )
-    # res.append(opencv_camera_node)
+    opencv_camera_node = Node(
+        name="opencv_camera",
+        package="mycobot_280",
+        executable="opencv_camera",
+        output="screen",
+        arguments=[LaunchConfiguration("num")]
+    )
+    res.append(opencv_camera_node)
     
-    # detect_marker_node = Node(
-    #     name="detect_marker",
-    #     package="mycobot_280",
-    #     executable="detect_marker",
-    # )
-    # res.append(detect_marker_node)
-    
-    
-    
+    detect_marker_node = Node(
+        name="detect_marker",
+        package="mycobot_280",
+        executable="detect_marker",
+    )
+    res.append(detect_marker_node)
 
     return LaunchDescription(res)
