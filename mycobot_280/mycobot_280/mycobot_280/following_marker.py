@@ -1,8 +1,7 @@
 import rclpy
 from rclpy.node import Node
-from tf2_ros.transform_listener import TransformListener
+from tf2_ros import TransformListener, Buffer
 from visualization_msgs.msg import Marker
-from tf2_ros.buffer import Buffer
 from tf2_ros import Duration
 from tf2_ros import TransformException
 
@@ -10,7 +9,10 @@ class Talker(Node):
     def __init__(self):
         super().__init__("following_marker")
 
-        self.tf_buffer = Buffer()
+        # note that due to the low rate, buffer has to be larger in order to store
+        # previous frame if possible...
+        # note that the frame is organized in time sequence and will be outdated.
+        self.tf_buffer = Buffer(cache_time=Duration(seconds=20.0))
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
         self.pub_marker = self.create_publisher(
@@ -29,18 +31,18 @@ class Talker(Node):
             marker_.header.frame_id = "/joint1"
             marker_.ns = "basic_cube"
 
-            # now = rclpy.time.Time()
             now = self.get_clock().now()
-            # self.get_logger().info("now origin: " + str(now.seconds_nanoseconds()))
-            # now = now - Duration(seconds=3.0)
-            # self.get_logger().info("now proces: " + str(now.seconds_nanoseconds()))
 
             try:
                 self.get_logger().info("trying lookup_transform...")
+                # also provides a large timeout, wait for frame become
+                # available in buffer...
+                # also note that we use rclpy.time.Time(), which is zero, meaning use the latest frame possible
+                # instead of setting a percise time-point. In order to make time-point work, always add a time-out...
                 trans = self.tf_buffer.lookup_transform(
                     "joint1",
                     "basic_shapes",
-                    now,
+                    rclpy.time.Time(),
                     rclpy.duration.Duration(seconds=5.0)
                 )
 
@@ -67,7 +69,6 @@ class Talker(Node):
 
             except TransformException as e:
                 self.get_logger().info("Error lookup_transform %s" % (e,))
-                print(e)
 
 
 def main():

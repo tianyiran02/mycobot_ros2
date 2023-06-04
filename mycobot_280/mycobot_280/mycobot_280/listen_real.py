@@ -63,8 +63,7 @@ class Talker(Node):
                 self.get_logger().info("res: {}".format(radians_list))
 
                 # publish angles.
-                # joint_state_send.header.stamp = self.get_clock().now().to_msg()
-                joint_state_send.header.stamp = rclpy.time.Time().to_msg()
+                joint_state_send.header.stamp = self.get_clock().now().to_msg()
                 joint_state_send.position = radians_list
                 pub.publish(joint_state_send)
                 rate.sleep()

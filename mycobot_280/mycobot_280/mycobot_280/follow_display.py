@@ -61,8 +61,7 @@ class Talker(Node):
 
         while rclpy.ok():
             rclpy.spin_once(self)
-            # joint_state_send.header.stamp = self.get_clock().now().to_msg()
-            joint_state_send.header.stamp = rclpy.time.Time().to_msg()
+            joint_state_send.header.stamp = self.get_clock().now().to_msg()
 
             angles = self.mc.get_radians()
             data_list = []

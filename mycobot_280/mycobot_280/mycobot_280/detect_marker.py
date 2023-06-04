@@ -100,8 +100,7 @@ class ImageConverter(Node):
 
                 # trans pose according [joint1]
                 trans_stamp = TransformStamped()
-                # trans_stamp.header._stamp = self.get_clock().now().to_msg()
-                trans_stamp.header._stamp = rclpy.time.Time().to_msg()
+                trans_stamp.header._stamp = self.get_clock().now().to_msg()
                 trans_stamp.header.frame_id = "joint6_flange"
                 trans_stamp.child_frame_id = "basic_shapes"
                 vector_xyz = Vector3()
