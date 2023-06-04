@@ -107,4 +107,11 @@ def generate_launch_description():
     )
     res.append(detect_marker_node)
 
+    # following_marker_node = Node(
+    #     name = "following_marker",
+    #     package="mycobot_280",
+    #     executable="following_marker",
+    # )
+    # res.append(following_marker_node)
+
     return LaunchDescription(res)

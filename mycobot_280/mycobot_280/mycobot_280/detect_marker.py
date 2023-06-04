@@ -6,6 +6,8 @@ from cv_bridge import CvBridge, CvBridgeError
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from tf2_ros import TransformBroadcaster
+from geometry_msgs.msg import TransformStamped
+from geometry_msgs.msg import Vector3, Quaternion
 
 
 class ImageConverter(Node):
@@ -97,14 +99,41 @@ class ImageConverter(Node):
                 print("tf_change:", tf_change)
 
                 # trans pose according [joint1]
-                self.br.sendTransform(
-                    xyz, tf_change, self.get_clock().now().to_msg(), "basic_shapes", "joint6_flange"
-                )
+                trans_stamp = TransformStamped()
+                # trans_stamp.header._stamp = self.get_clock().now().to_msg()
+                trans_stamp.header._stamp = rclpy.time.Time().to_msg()
+                trans_stamp.header.frame_id = "joint6_flange"
+                trans_stamp.child_frame_id = "basic_shapes"
+                vector_xyz = Vector3()
+                vector_rot = Quaternion()
+                vector_xyz.x = xyz[0]
+                vector_xyz.y = xyz[1]
+                vector_xyz.z = xyz[2]
+                vector_rot.x = tf_change[0]
+                vector_rot.y = tf_change[1]
+                vector_rot.z = tf_change[2]
+                vector_rot.w = tf_change[3]
+                trans_stamp.transform.translation = vector_xyz
+                trans_stamp.transform.rotation = vector_rot
+                self.br.sendTransform(trans_stamp)
 
-        # [x, y, z, -172, 3, -46.8]
-        cv2.imshow("Image", cv_image)
+        # # [x, y, z, -172, 3, -46.8]
+        # height, width = cv_image.shape[:2]
 
-        cv2.waitKey(3)
+        # # Define resize ratio
+        # ratio = 0.25
+
+        # # Compute new dimensions
+        # new_height = int(height * ratio)
+        # new_width = int(width * ratio)
+
+        # # Resize image
+        # resized_img = cv2.resize(cv_image, (new_width, new_height))
+
+        # # Display resized image
+        # cv2.imshow('Marker Detection Image', resized_img)
+
+        # cv2.waitKey(3)
         try:
             pass
         except CvBridgeError as e:

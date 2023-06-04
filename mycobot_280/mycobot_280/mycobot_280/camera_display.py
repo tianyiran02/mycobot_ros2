@@ -15,7 +15,7 @@ class image_Subscription(Node):
             msg_type=Image,
             topic="camera/image",
             callback=self.img_callback,
-            qos_profile=1
+            qos_profile=10
         )
 
     def img_callback(self, msg):

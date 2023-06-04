@@ -40,6 +40,7 @@ setup(
             'simple_gui = mycobot_280.simple_gui:main',
             'slider_control = mycobot_280.slider_control:main',
             'teleop_keyboard = mycobot_280.teleop_keyboard:main',
+            'follow_and_pump = mycobot_280.follow_and_pump:main',
         ],
     },
 )

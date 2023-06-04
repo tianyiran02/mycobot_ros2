@@ -33,11 +33,11 @@ class Talker(Node):
             topic="joint_states",
             qos_profile=10
         )
-        pub_marker = self.create_publisher(
-            msg_type=Marker,
-            topic="visualization_marker",
-            qos_profile=10
-        )
+        # pub_marker = self.create_publisher(
+        #     msg_type=Marker,
+        #     topic="visualization_marker",
+        #     qos_profile=10
+        # )
         rate = self.create_rate(30)
 
         # pub joint state
@@ -61,7 +61,8 @@ class Talker(Node):
 
         while rclpy.ok():
             rclpy.spin_once(self)
-            joint_state_send.header.stamp = self.get_clock().now().to_msg()
+            # joint_state_send.header.stamp = self.get_clock().now().to_msg()
+            joint_state_send.header.stamp = rclpy.time.Time().to_msg()
 
             angles = self.mc.get_radians()
             data_list = []
@@ -75,30 +76,30 @@ class Talker(Node):
 
             pub.publish(joint_state_send)
 
-            coords = self.mc.get_coords()
+            # coords = self.mc.get_coords()
 
-            # marker
-            marker_.header.stamp = self.get_clock().now().to_msg()
-            marker_.type = marker_.SPHERE
-            marker_.action = marker_.ADD
-            marker_.scale.x = 0.04
-            marker_.scale.y = 0.04
-            marker_.scale.z = 0.04
+            # # marker
+            # marker_.header.stamp = self.get_clock().now().to_msg()
+            # marker_.type = marker_.SPHERE
+            # marker_.action = marker_.ADD
+            # marker_.scale.x = 0.04
+            # marker_.scale.y = 0.04
+            # marker_.scale.z = 0.04
 
-            # marker position initial
-            # self.get_logger().info('{}'.format(coords))
+            # # marker position initial
+            # # self.get_logger().info('{}'.format(coords))
             
-            if not coords:
-                coords = [0, 0, 0, 0, 0, 0]
-                # self.get_logger().info("error [101]: can not get coord values")
+            # if not coords:
+            #     coords = [0, 0, 0, 0, 0, 0]
+            #     # self.get_logger().info("error [101]: can not get coord values")
 
-            marker_.pose.position.x = coords[1] / 1000 * -1
-            marker_.pose.position.y = coords[0] / 1000
-            marker_.pose.position.z = coords[2] / 1000
+            # marker_.pose.position.x = coords[1] / 1000 * -1
+            # marker_.pose.position.y = coords[0] / 1000
+            # marker_.pose.position.z = coords[2] / 1000
 
-            marker_.color.a = 1.0
-            marker_.color.g = 1.0
-            pub_marker.publish(marker_)
+            # marker_.color.a = 1.0
+            # marker_.color.g = 1.0
+            # # pub_marker.publish(marker_)
 
             rate.sleep()
 

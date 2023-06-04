@@ -54,7 +54,7 @@ def pub_coords(x, y, z, rx=0, ry=0, rz=-35, sp=70, m=2):
     coords.rx = rx
     coords.ry = ry
     coords.rz = rz
-    coords.speed = 70
+    coords.speed = sp
     coords.model = m
     # print(coords)
     coord_pub.publish(coords)
